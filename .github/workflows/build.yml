@@ -5,33 +5,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Télécharger code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Installer Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Installer dépendances
-        run: |
-          sudo apt update
-          sudo apt install -y \
-          git zip unzip openjdk-17-jdk python3-pip \
-          autoconf libtool pkg-config zlib1g-dev \
-          libncurses5-dev libncursesw5-dev libtinfo5 \
-          cmake libffi-dev libssl-dev
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
 
-          pip install --upgrade pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
           pip install buildozer cython virtualenv
-
-      - name: Accepter licences Android
-        run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
 
       - name: Build APK
         run: |
