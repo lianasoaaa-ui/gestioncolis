@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install system dependencies
+      - name: Install system deps
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk \
@@ -28,18 +28,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install cython==0.29.37 buildozer==1.6.0 virtualenv
 
-      - name: Clean previous build
-        run: rm -rf .buildozer bin
-
-      - name: Build APK
-        run: buildozer -v android debug
-
-      - name: List APK output (IMPORTANT)
+      - name: Prepare Buildozer
         run: |
-          echo "=== BIN CONTENT ==="
+          mkdir -p ~/.buildozer
+          rm -rf .buildozer
+
+      - name: Build APK (force SDK download)
+        env:
+          P4A_FORCE_BOOTSTRAP: sdl2
+        run: |
+          buildozer android debug
+
+      - name: Show output
+        run: |
           ls -R bin || true
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: apk
