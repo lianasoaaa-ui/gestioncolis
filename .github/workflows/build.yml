@@ -19,7 +19,7 @@ jobs:
       - name: Install system packages
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17 python3-pip \
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip \
           autoconf automake libtool pkg-config zlib1g-dev \
           libncurses5-dev libffi-dev libssl-dev cmake
 
@@ -28,10 +28,11 @@ jobs:
           pip install --upgrade pip
           pip install cython==0.29.37 buildozer==1.6.0 virtualenv
 
-      - name: Build APK (force rebuild)
-        run: |
-          rm -rf .buildozer
-          buildozer android debug
+      - name: Clean build
+        run: rm -rf .buildozer
+
+      - name: Build APK
+        run: buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
